@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link href="css/bootstrap.css" rel="stylesheet" type="text/css">
+  <link href="css/styles.css" rel="stylesheet" type="text/css">
+  <script src="js/jquery-1.11.1.js"></script>
+  <script src="js/scripts.js"></script>
+  <script src="js/ractive.js"></script>
+  <script src="js/ractive-transitions-slide.js"></script>
+  <script src="js/ractive-events-tap.js"></script>
+  <title>5LetterWordGame</title>
+</head>
+<body>
+  <div class="container">
+		<h2>Text is Content</h2>
+    <div id='input'>        
+      <form role='form'>
+        <div class='form-group'>
+	        <label for="snippet-text">Text</label>
+	        <input type="text" id="snippet-text" class="form-element">
+        </div>
+        <div class='form-group'>
+	        <label for="snippet-asset">Asset</label>
+	        <input name='asset-type' type="text" id="snippet-asset" class="form-element">
+        </div>
+
+        <div class='form-group'>
+	        <label for="image">image url</label>
+	        <input name='asset-type' type="radio" name="asset-type" value="image">
+	      </div>
+        <div class='form-group'>
+	        <label for="mp3">mp3 url</label>
+	        <input name='asset-type' type="radio" name="asset-type" value="mp3">
+	      </div>
+        <div class='form-group'>
+	        <label for="link">link (www....com)</label>
+	        <input name='asset-type' type="radio" name="asset-type" value="link">
+	      </div>
+        <div class='form-group'>
+	        <label for="text">text</label>
+	        <input name='asset-type' type="radio" name="asset-type" value="text">
+	      </div>
+          <input type="button" value="Submit" onclick="hyperfy();">
+<!-- 	        <label for="btn">Submit</label>
+	        <div class="btn-group" id='asset-type'> -->
+<!-- 	          <button type="button" class="btn btn-default" value="image" onclick="hyperfy();">image url</button>
+	          <button type="button" class="btn btn-default" value="audio" onclick="hyperfy();">mp3 url</button>
+	          <button type="button" class="btn btn-default" value="link" onclick="hyperfy();">weblink</button>
+	          <button type="button" class="btn btn-default" value="text" onclick="hyperfy();">text</button> -->
+	        </div>
+        </div>
+      </form>
+    </div>
+		<div id='about-me'></div>
+
+		<script id='template' type='text/ractive'>
+		  <ul class='snippets'>
+		    {{#hypertexts}}
+		      <span on-tap='toggle'>
+		        <strong class='{{ expanded ? "expanded" : "collapsed" }} snippet-text'>{{snippet}}</strong>
+		        {{#expanded}}
+		          <div intro-outro='slide'>{{{asset}}}</div>
+		        {{/expanded}}
+		      </span>
+		    {{/hypertexts}}
+		  </ul>
+		</script>
+
+		<script>
+		  var output = new Ractive({
+		    el: '#about-me',
+		    template: '#template',
+		    data: {
+		    	hypertexts: [ 
+			    	{
+				    	snippet: 'Hi, my name is blnkt. ',
+				    	asset: "<img src='img/blnkt.jpg' alt='A Pic of Blnkt'>",
+				    	activated: false
+				    },
+				    {
+				    	snippet: 'My life is tumbling out of control.  ',
+				    	asset: "<img src='img/blnkt.jpg' alt='A Pic of Blnkt'>",
+				    	activated: false
+				    },
+		      ]
+		    }
+		  });
+
+		  output.on( 'toggle', function ( event ) {
+		    this.toggle( event.keypath + '.expanded' );
+		  });	
+
+		  function hyperfy() {
+		    var snippetInput = document.getElementById("snippet-text").value;
+		    var assetInput = document.getElementById("snippet-asset").value;
+		    output.push('hypertexts', {
+		    	snippet: snippetInput,
+		    	asset: assetMedia(assetInput),
+		    	activated: false
+		    });
+		    document.getElementById("snippet-text").value = '';
+		    document.getElementById("snippet-asset").value = '';
+      }
+
+      function assetMedia(asset) {
+		    var assetTypes = document.getElementsByName('asset-type');
+		    var assetType
+		    for (var i = 0, length = assetTypes.length; i < length; i++) {
+	        if (assetTypes[i].checked) {
+            assetType = assetTypes[i].value;
+            break;
+	        }
+	      }
+
+      	if (assetType === 'image') {
+      		console.log(assetType);
+      		return "<img src='" + asset + "''>" 
+      	} else if (assetType === 'audio') {
+      		console.log(assetType);
+      		return "<audio controls> <source src='" + asset + "' type='audio/mp3'>Your browser does not support the audio element.</audio>"
+      	} else if (assetType === 'link') {
+      		console.log(assetType);
+      		return "<a href='http://" + asset + "'>Visit asset!</a>"
+      	} else {
+      		console.log(assetType);
+      		return "<p>" + asset + "</p>"
+      	}
+      }
+		</script>
+  </div>
+</body>
+</html>
